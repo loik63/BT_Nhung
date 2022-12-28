@@ -3,29 +3,29 @@ main.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         0000023e  00000000  00000000  00000094  2**1
+  0 .text         00000266  00000000  00000000  00000094  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .data         00000002  00800060  0000023e  000002d2  2**0
+  1 .data         00000002  00800060  00000266  000002fa  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  2 .bss          00000004  00800062  00800062  000002d4  2**0
+  2 .bss          00000004  00800062  00800062  000002fc  2**0
                   ALLOC
-  3 .comment      00000030  00000000  00000000  000002d4  2**0
+  3 .comment      00000030  00000000  00000000  000002fc  2**0
                   CONTENTS, READONLY
-  4 .debug_aranges 00000028  00000000  00000000  00000304  2**0
+  4 .debug_aranges 00000028  00000000  00000000  0000032c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   000001cd  00000000  00000000  0000032c  2**0
+  5 .debug_info   000001cd  00000000  00000000  00000354  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 000000f3  00000000  00000000  000004f9  2**0
+  6 .debug_abbrev 000000f3  00000000  00000000  00000521  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   00000199  00000000  00000000  000005ec  2**0
+  7 .debug_line   000001c3  00000000  00000000  00000614  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  00000054  00000000  00000000  00000788  2**2
+  8 .debug_frame  00000054  00000000  00000000  000007d8  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    00000164  00000000  00000000  000007dc  2**0
+  9 .debug_str    00000164  00000000  00000000  0000082c  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    00000135  00000000  00000000  00000940  2**0
+ 10 .debug_loc    00000135  00000000  00000000  00000990  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000018  00000000  00000000  00000a75  2**0
+ 11 .debug_ranges 00000018  00000000  00000000  00000ac5  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -65,7 +65,7 @@ Disassembly of section .text:
   60:	10 e0       	ldi	r17, 0x00	; 0
   62:	a0 e6       	ldi	r26, 0x60	; 96
   64:	b0 e0       	ldi	r27, 0x00	; 0
-  66:	ee e3       	ldi	r30, 0x3E	; 62
+  66:	e6 e6       	ldi	r30, 0x66	; 102
   68:	f2 e0       	ldi	r31, 0x02	; 2
   6a:	02 c0       	rjmp	.+4      	; 0x70 <__do_copy_data+0x10>
   6c:	05 90       	lpm	r0, Z+
@@ -88,7 +88,7 @@ Disassembly of section .text:
   82:	b2 07       	cpc	r27, r18
   84:	e1 f7       	brne	.-8      	; 0x7e <.do_clear_bss_loop>
   86:	0e 94 49 00 	call	0x92	; 0x92 <main>
-  8a:	0c 94 1d 01 	jmp	0x23a	; 0x23a <_exit>
+  8a:	0c 94 31 01 	jmp	0x262	; 0x262 <_exit>
 
 0000008e <__bad_interrupt>:
   8e:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
@@ -190,207 +190,227 @@ ISR(TIMER2_OVF_vect)
   f6:	90 91 63 00 	lds	r25, 0x0063
   fa:	05 97       	sbiw	r24, 0x05	; 5
   fc:	08 f4       	brcc	.+2      	; 0x100 <__vector_4+0x22>
-  fe:	88 c0       	rjmp	.+272    	; 0x210 <__vector_4+0x132>
+  fe:	9c c0       	rjmp	.+312    	; 0x238 <__vector_4+0x15a>
 	{
 		CountT2=0;
  100:	10 92 63 00 	sts	0x0063, r1
  104:	10 92 62 00 	sts	0x0062, r1
 		
-		if((PINB & (1 << button_up)) == 0)
+		if(((PINB & (1 << button_up)) == 0) && (PORTD == (1 << PIND1)))
  108:	b1 99       	sbic	0x16, 1	; 22
- 10a:	24 c0       	rjmp	.+72     	; 0x154 <__vector_4+0x76>
+ 10a:	2e c0       	rjmp	.+92     	; 0x168 <__vector_4+0x8a>
+ 10c:	82 b3       	in	r24, 0x12	; 18
+ 10e:	82 30       	cpi	r24, 0x02	; 2
+ 110:	59 f5       	brne	.+86     	; 0x168 <__vector_4+0x8a>
 	#else
 		//round up by default
 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
 	#endif
 
 	__builtin_avr_delay_cycles(__ticks_dc);
- 10c:	8f e0       	ldi	r24, 0x0F	; 15
- 10e:	97 e2       	ldi	r25, 0x27	; 39
- 110:	01 97       	sbiw	r24, 0x01	; 1
- 112:	f1 f7       	brne	.-4      	; 0x110 <__vector_4+0x32>
- 114:	00 c0       	rjmp	.+0      	; 0x116 <__vector_4+0x38>
- 116:	00 00       	nop
+ 112:	8f e0       	ldi	r24, 0x0F	; 15
+ 114:	97 e2       	ldi	r25, 0x27	; 39
+ 116:	01 97       	sbiw	r24, 0x01	; 1
+ 118:	f1 f7       	brne	.-4      	; 0x116 <__vector_4+0x38>
+ 11a:	00 c0       	rjmp	.+0      	; 0x11c <__vector_4+0x3e>
+ 11c:	00 00       	nop
 		{
 			_delay_ms(5);
-			if((PINB & (1 << button_up)) == 0)
- 118:	b1 99       	sbic	0x16, 1	; 22
- 11a:	6e c0       	rjmp	.+220    	; 0x1f8 <__vector_4+0x11a>
+			if(((PINB & (1 << button_up)) == 0) && (PORTD == (1 << PIND1)))
+ 11e:	b1 99       	sbic	0x16, 1	; 22
+ 120:	7f c0       	rjmp	.+254    	; 0x220 <__vector_4+0x142>
+ 122:	82 b3       	in	r24, 0x12	; 18
+ 124:	82 30       	cpi	r24, 0x02	; 2
+ 126:	09 f0       	breq	.+2      	; 0x12a <__vector_4+0x4c>
+ 128:	7b c0       	rjmp	.+246    	; 0x220 <__vector_4+0x142>
 			{
-				while((PINB & (1 << button_up)) == 0);
- 11c:	b1 9b       	sbis	0x16, 1	; 22
- 11e:	fe cf       	rjmp	.-4      	; 0x11c <__vector_4+0x3e>
+				while(((PINB & (1 << button_up)) == 0) && (PORTD == (1 << PIND1)));
+ 12a:	b1 99       	sbic	0x16, 1	; 22
+ 12c:	03 c0       	rjmp	.+6      	; 0x134 <__vector_4+0x56>
+ 12e:	82 b3       	in	r24, 0x12	; 18
+ 130:	82 30       	cpi	r24, 0x02	; 2
+ 132:	d9 f3       	breq	.-10     	; 0x12a <__vector_4+0x4c>
 				Speed += Temp;
- 120:	20 91 60 00 	lds	r18, 0x0060
- 124:	30 91 61 00 	lds	r19, 0x0061
- 128:	80 91 64 00 	lds	r24, 0x0064
- 12c:	90 91 65 00 	lds	r25, 0x0065
- 130:	82 0f       	add	r24, r18
- 132:	93 1f       	adc	r25, r19
+ 134:	20 91 60 00 	lds	r18, 0x0060
+ 138:	30 91 61 00 	lds	r19, 0x0061
+ 13c:	80 91 64 00 	lds	r24, 0x0064
+ 140:	90 91 65 00 	lds	r25, 0x0065
+ 144:	82 0f       	add	r24, r18
+ 146:	93 1f       	adc	r25, r19
 				if(Speed>=15999) Speed=15999;
- 134:	8f 37       	cpi	r24, 0x7F	; 127
- 136:	2e e3       	ldi	r18, 0x3E	; 62
- 138:	92 07       	cpc	r25, r18
- 13a:	28 f4       	brcc	.+10     	; 0x146 <__vector_4+0x68>
+ 148:	8f 37       	cpi	r24, 0x7F	; 127
+ 14a:	2e e3       	ldi	r18, 0x3E	; 62
+ 14c:	92 07       	cpc	r25, r18
+ 14e:	28 f4       	brcc	.+10     	; 0x15a <__vector_4+0x7c>
 		{
 			_delay_ms(5);
-			if((PINB & (1 << button_up)) == 0)
+			if(((PINB & (1 << button_up)) == 0) && (PORTD == (1 << PIND1)))
 			{
-				while((PINB & (1 << button_up)) == 0);
+				while(((PINB & (1 << button_up)) == 0) && (PORTD == (1 << PIND1)));
 				Speed += Temp;
- 13c:	90 93 65 00 	sts	0x0065, r25
- 140:	80 93 64 00 	sts	0x0064, r24
- 144:	59 c0       	rjmp	.+178    	; 0x1f8 <__vector_4+0x11a>
+ 150:	90 93 65 00 	sts	0x0065, r25
+ 154:	80 93 64 00 	sts	0x0064, r24
+ 158:	63 c0       	rjmp	.+198    	; 0x220 <__vector_4+0x142>
 				if(Speed>=15999) Speed=15999;
- 146:	8f e7       	ldi	r24, 0x7F	; 127
- 148:	9e e3       	ldi	r25, 0x3E	; 62
- 14a:	90 93 65 00 	sts	0x0065, r25
- 14e:	80 93 64 00 	sts	0x0064, r24
- 152:	52 c0       	rjmp	.+164    	; 0x1f8 <__vector_4+0x11a>
+ 15a:	8f e7       	ldi	r24, 0x7F	; 127
+ 15c:	9e e3       	ldi	r25, 0x3E	; 62
+ 15e:	90 93 65 00 	sts	0x0065, r25
+ 162:	80 93 64 00 	sts	0x0064, r24
+ 166:	5c c0       	rjmp	.+184    	; 0x220 <__vector_4+0x142>
 			}
 		}
-		else if((PINB & (1 << button_dowm)) == 0)
- 154:	b2 99       	sbic	0x16, 2	; 22
- 156:	32 c0       	rjmp	.+100    	; 0x1bc <__vector_4+0xde>
+		else if(((PINB & (1 << button_dowm)) == 0) && (PORTD == (1 << PIND1)))
+ 168:	b2 99       	sbic	0x16, 2	; 22
+ 16a:	3c c0       	rjmp	.+120    	; 0x1e4 <__vector_4+0x106>
+ 16c:	82 b3       	in	r24, 0x12	; 18
+ 16e:	82 30       	cpi	r24, 0x02	; 2
+ 170:	c9 f5       	brne	.+114    	; 0x1e4 <__vector_4+0x106>
 		{
 			if(Speed >= 1500)
- 158:	80 91 64 00 	lds	r24, 0x0064
- 15c:	90 91 65 00 	lds	r25, 0x0065
- 160:	8c 3d       	cpi	r24, 0xDC	; 220
- 162:	95 40       	sbci	r25, 0x05	; 5
- 164:	20 f1       	brcs	.+72     	; 0x1ae <__vector_4+0xd0>
- 166:	8f e0       	ldi	r24, 0x0F	; 15
- 168:	97 e2       	ldi	r25, 0x27	; 39
- 16a:	01 97       	sbiw	r24, 0x01	; 1
- 16c:	f1 f7       	brne	.-4      	; 0x16a <__vector_4+0x8c>
- 16e:	00 c0       	rjmp	.+0      	; 0x170 <__vector_4+0x92>
- 170:	00 00       	nop
+ 172:	80 91 64 00 	lds	r24, 0x0064
+ 176:	90 91 65 00 	lds	r25, 0x0065
+ 17a:	8c 3d       	cpi	r24, 0xDC	; 220
+ 17c:	95 40       	sbci	r25, 0x05	; 5
+ 17e:	58 f1       	brcs	.+86     	; 0x1d6 <__vector_4+0xf8>
+ 180:	8f e0       	ldi	r24, 0x0F	; 15
+ 182:	97 e2       	ldi	r25, 0x27	; 39
+ 184:	01 97       	sbiw	r24, 0x01	; 1
+ 186:	f1 f7       	brne	.-4      	; 0x184 <__vector_4+0xa6>
+ 188:	00 c0       	rjmp	.+0      	; 0x18a <__vector_4+0xac>
+ 18a:	00 00       	nop
 			{
 				_delay_ms(5);
-				if((PINB & (1 << button_dowm)) == 0)
- 172:	b2 99       	sbic	0x16, 2	; 22
- 174:	41 c0       	rjmp	.+130    	; 0x1f8 <__vector_4+0x11a>
+				if(((PINB & (1 << button_dowm)) == 0) && (PORTD == (1 << PIND1)))
+ 18c:	b2 99       	sbic	0x16, 2	; 22
+ 18e:	48 c0       	rjmp	.+144    	; 0x220 <__vector_4+0x142>
+ 190:	82 b3       	in	r24, 0x12	; 18
+ 192:	82 30       	cpi	r24, 0x02	; 2
+ 194:	09 f0       	breq	.+2      	; 0x198 <__vector_4+0xba>
+ 196:	44 c0       	rjmp	.+136    	; 0x220 <__vector_4+0x142>
 				{
-					while((PINB & (1 << button_dowm)) == 0);
- 176:	b2 9b       	sbis	0x16, 2	; 22
- 178:	fe cf       	rjmp	.-4      	; 0x176 <__vector_4+0x98>
+					while(((PINB & (1 << button_dowm)) == 0) && (PORTD == (1 << PIND1)));
+ 198:	b2 99       	sbic	0x16, 2	; 22
+ 19a:	03 c0       	rjmp	.+6      	; 0x1a2 <__vector_4+0xc4>
+ 19c:	82 b3       	in	r24, 0x12	; 18
+ 19e:	82 30       	cpi	r24, 0x02	; 2
+ 1a0:	d9 f3       	breq	.-10     	; 0x198 <__vector_4+0xba>
 					Speed -= Temp;
- 17a:	80 91 64 00 	lds	r24, 0x0064
- 17e:	90 91 65 00 	lds	r25, 0x0065
- 182:	20 91 60 00 	lds	r18, 0x0060
- 186:	30 91 61 00 	lds	r19, 0x0061
- 18a:	82 1b       	sub	r24, r18
- 18c:	93 0b       	sbc	r25, r19
+ 1a2:	80 91 64 00 	lds	r24, 0x0064
+ 1a6:	90 91 65 00 	lds	r25, 0x0065
+ 1aa:	20 91 60 00 	lds	r18, 0x0060
+ 1ae:	30 91 61 00 	lds	r19, 0x0061
+ 1b2:	82 1b       	sub	r24, r18
+ 1b4:	93 0b       	sbc	r25, r19
 					if(Speed <= 500) Speed = 1500;
- 18e:	85 3f       	cpi	r24, 0xF5	; 245
- 190:	21 e0       	ldi	r18, 0x01	; 1
- 192:	92 07       	cpc	r25, r18
- 194:	28 f0       	brcs	.+10     	; 0x1a0 <__vector_4+0xc2>
+ 1b6:	85 3f       	cpi	r24, 0xF5	; 245
+ 1b8:	21 e0       	ldi	r18, 0x01	; 1
+ 1ba:	92 07       	cpc	r25, r18
+ 1bc:	28 f0       	brcs	.+10     	; 0x1c8 <__vector_4+0xea>
 			{
 				_delay_ms(5);
-				if((PINB & (1 << button_dowm)) == 0)
+				if(((PINB & (1 << button_dowm)) == 0) && (PORTD == (1 << PIND1)))
 				{
-					while((PINB & (1 << button_dowm)) == 0);
+					while(((PINB & (1 << button_dowm)) == 0) && (PORTD == (1 << PIND1)));
 					Speed -= Temp;
- 196:	90 93 65 00 	sts	0x0065, r25
- 19a:	80 93 64 00 	sts	0x0064, r24
- 19e:	2c c0       	rjmp	.+88     	; 0x1f8 <__vector_4+0x11a>
+ 1be:	90 93 65 00 	sts	0x0065, r25
+ 1c2:	80 93 64 00 	sts	0x0064, r24
+ 1c6:	2c c0       	rjmp	.+88     	; 0x220 <__vector_4+0x142>
 					if(Speed <= 500) Speed = 1500;
- 1a0:	8c ed       	ldi	r24, 0xDC	; 220
- 1a2:	95 e0       	ldi	r25, 0x05	; 5
- 1a4:	90 93 65 00 	sts	0x0065, r25
- 1a8:	80 93 64 00 	sts	0x0064, r24
- 1ac:	25 c0       	rjmp	.+74     	; 0x1f8 <__vector_4+0x11a>
+ 1c8:	8c ed       	ldi	r24, 0xDC	; 220
+ 1ca:	95 e0       	ldi	r25, 0x05	; 5
+ 1cc:	90 93 65 00 	sts	0x0065, r25
+ 1d0:	80 93 64 00 	sts	0x0064, r24
+ 1d4:	25 c0       	rjmp	.+74     	; 0x220 <__vector_4+0x142>
 				}
 			}
 			else Speed = 1500;
- 1ae:	8c ed       	ldi	r24, 0xDC	; 220
- 1b0:	95 e0       	ldi	r25, 0x05	; 5
- 1b2:	90 93 65 00 	sts	0x0065, r25
- 1b6:	80 93 64 00 	sts	0x0064, r24
- 1ba:	1e c0       	rjmp	.+60     	; 0x1f8 <__vector_4+0x11a>
+ 1d6:	8c ed       	ldi	r24, 0xDC	; 220
+ 1d8:	95 e0       	ldi	r25, 0x05	; 5
+ 1da:	90 93 65 00 	sts	0x0065, r25
+ 1de:	80 93 64 00 	sts	0x0064, r24
+ 1e2:	1e c0       	rjmp	.+60     	; 0x220 <__vector_4+0x142>
 			
 		}
 		else if((PINB & (1 << button_start)) == 0)
- 1bc:	b0 99       	sbic	0x16, 0	; 22
- 1be:	1c c0       	rjmp	.+56     	; 0x1f8 <__vector_4+0x11a>
- 1c0:	8f e0       	ldi	r24, 0x0F	; 15
- 1c2:	97 e2       	ldi	r25, 0x27	; 39
- 1c4:	01 97       	sbiw	r24, 0x01	; 1
- 1c6:	f1 f7       	brne	.-4      	; 0x1c4 <__vector_4+0xe6>
- 1c8:	00 c0       	rjmp	.+0      	; 0x1ca <__vector_4+0xec>
- 1ca:	00 00       	nop
+ 1e4:	b0 99       	sbic	0x16, 0	; 22
+ 1e6:	1c c0       	rjmp	.+56     	; 0x220 <__vector_4+0x142>
+ 1e8:	8f e0       	ldi	r24, 0x0F	; 15
+ 1ea:	97 e2       	ldi	r25, 0x27	; 39
+ 1ec:	01 97       	sbiw	r24, 0x01	; 1
+ 1ee:	f1 f7       	brne	.-4      	; 0x1ec <__vector_4+0x10e>
+ 1f0:	00 c0       	rjmp	.+0      	; 0x1f2 <__vector_4+0x114>
+ 1f2:	00 00       	nop
 		{
 			_delay_ms(5);
 			if((PINB & (1 << button_start)) == 0)
- 1cc:	b0 99       	sbic	0x16, 0	; 22
- 1ce:	14 c0       	rjmp	.+40     	; 0x1f8 <__vector_4+0x11a>
+ 1f4:	b0 99       	sbic	0x16, 0	; 22
+ 1f6:	14 c0       	rjmp	.+40     	; 0x220 <__vector_4+0x142>
 			{
 				while((PINB & (1 << button_start)) == 0);
- 1d0:	b0 9b       	sbis	0x16, 0	; 22
- 1d2:	fe cf       	rjmp	.-4      	; 0x1d0 <__vector_4+0xf2>
+ 1f8:	b0 9b       	sbis	0x16, 0	; 22
+ 1fa:	fe cf       	rjmp	.-4      	; 0x1f8 <__vector_4+0x11a>
 				tbi(PORTD, 1);
- 1d4:	92 b3       	in	r25, 0x12	; 18
- 1d6:	82 e0       	ldi	r24, 0x02	; 2
- 1d8:	89 27       	eor	r24, r25
- 1da:	82 bb       	out	0x12, r24	; 18
+ 1fc:	92 b3       	in	r25, 0x12	; 18
+ 1fe:	82 e0       	ldi	r24, 0x02	; 2
+ 200:	89 27       	eor	r24, r25
+ 202:	82 bb       	out	0x12, r24	; 18
 				if(PORTD == (0 << PIND1)){
- 1dc:	82 b3       	in	r24, 0x12	; 18
- 1de:	81 11       	cpse	r24, r1
- 1e0:	05 c0       	rjmp	.+10     	; 0x1ec <__vector_4+0x10e>
+ 204:	82 b3       	in	r24, 0x12	; 18
+ 206:	81 11       	cpse	r24, r1
+ 208:	05 c0       	rjmp	.+10     	; 0x214 <__vector_4+0x136>
 					Speed = 0;
- 1e2:	10 92 65 00 	sts	0x0065, r1
- 1e6:	10 92 64 00 	sts	0x0064, r1
- 1ea:	06 c0       	rjmp	.+12     	; 0x1f8 <__vector_4+0x11a>
+ 20a:	10 92 65 00 	sts	0x0065, r1
+ 20e:	10 92 64 00 	sts	0x0064, r1
+ 212:	06 c0       	rjmp	.+12     	; 0x220 <__vector_4+0x142>
 				}
 				else{
 					Speed = 1500;
- 1ec:	8c ed       	ldi	r24, 0xDC	; 220
- 1ee:	95 e0       	ldi	r25, 0x05	; 5
- 1f0:	90 93 65 00 	sts	0x0065, r25
- 1f4:	80 93 64 00 	sts	0x0064, r24
+ 214:	8c ed       	ldi	r24, 0xDC	; 220
+ 216:	95 e0       	ldi	r25, 0x05	; 5
+ 218:	90 93 65 00 	sts	0x0065, r25
+ 21c:	80 93 64 00 	sts	0x0064, r24
 		/***
 		On_Off(Speed);
 		Speed_up(Speed, Temp);
 		Speed_down(Speed, Temp);
 		***/
 		OCR1AH= Speed >>8 ;
- 1f8:	80 91 65 00 	lds	r24, 0x0065
- 1fc:	8b bd       	out	0x2b, r24	; 43
+ 220:	80 91 65 00 	lds	r24, 0x0065
+ 224:	8b bd       	out	0x2b, r24	; 43
 		OCR1AL= Speed && 0xFF ;
- 1fe:	21 e0       	ldi	r18, 0x01	; 1
- 200:	80 91 64 00 	lds	r24, 0x0064
- 204:	90 91 65 00 	lds	r25, 0x0065
- 208:	89 2b       	or	r24, r25
- 20a:	09 f4       	brne	.+2      	; 0x20e <__vector_4+0x130>
- 20c:	20 e0       	ldi	r18, 0x00	; 0
- 20e:	2a bd       	out	0x2a, r18	; 42
+ 226:	21 e0       	ldi	r18, 0x01	; 1
+ 228:	80 91 64 00 	lds	r24, 0x0064
+ 22c:	90 91 65 00 	lds	r25, 0x0065
+ 230:	89 2b       	or	r24, r25
+ 232:	09 f4       	brne	.+2      	; 0x236 <__vector_4+0x158>
+ 234:	20 e0       	ldi	r18, 0x00	; 0
+ 236:	2a bd       	out	0x2a, r18	; 42
 		
 		
 	}
 	CountT2++;
- 210:	80 91 62 00 	lds	r24, 0x0062
- 214:	90 91 63 00 	lds	r25, 0x0063
- 218:	01 96       	adiw	r24, 0x01	; 1
- 21a:	90 93 63 00 	sts	0x0063, r25
- 21e:	80 93 62 00 	sts	0x0062, r24
+ 238:	80 91 62 00 	lds	r24, 0x0062
+ 23c:	90 91 63 00 	lds	r25, 0x0063
+ 240:	01 96       	adiw	r24, 0x01	; 1
+ 242:	90 93 63 00 	sts	0x0063, r25
+ 246:	80 93 62 00 	sts	0x0062, r24
 	TCNT2=0x00;
- 222:	14 bc       	out	0x24, r1	; 36
+ 24a:	14 bc       	out	0x24, r1	; 36
 	TCCR2=(1<<CS22) | (1<<CS21) | (1<<CS20);
- 224:	87 e0       	ldi	r24, 0x07	; 7
- 226:	85 bd       	out	0x25, r24	; 37
- 228:	9f 91       	pop	r25
- 22a:	8f 91       	pop	r24
- 22c:	3f 91       	pop	r19
- 22e:	2f 91       	pop	r18
- 230:	0f 90       	pop	r0
- 232:	0f be       	out	0x3f, r0	; 63
- 234:	0f 90       	pop	r0
- 236:	1f 90       	pop	r1
- 238:	18 95       	reti
+ 24c:	87 e0       	ldi	r24, 0x07	; 7
+ 24e:	85 bd       	out	0x25, r24	; 37
+ 250:	9f 91       	pop	r25
+ 252:	8f 91       	pop	r24
+ 254:	3f 91       	pop	r19
+ 256:	2f 91       	pop	r18
+ 258:	0f 90       	pop	r0
+ 25a:	0f be       	out	0x3f, r0	; 63
+ 25c:	0f 90       	pop	r0
+ 25e:	1f 90       	pop	r1
+ 260:	18 95       	reti
 
-0000023a <_exit>:
- 23a:	f8 94       	cli
+00000262 <_exit>:
+ 262:	f8 94       	cli
 
-0000023c <__stop_program>:
- 23c:	ff cf       	rjmp	.-2      	; 0x23c <__stop_program>
+00000264 <__stop_program>:
+ 264:	ff cf       	rjmp	.-2      	; 0x264 <__stop_program>

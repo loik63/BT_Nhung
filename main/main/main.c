@@ -55,24 +55,24 @@ ISR(TIMER2_OVF_vect)
 	{
 		CountT2=0;
 		
-		if((PINB & (1 << button_up)) == 0)
+		if(((PINB & (1 << button_up)) == 0) && (PORTD == (1 << PIND1)))
 		{
 			_delay_ms(5);
-			if((PINB & (1 << button_up)) == 0)
+			if(((PINB & (1 << button_up)) == 0) && (PORTD == (1 << PIND1)))
 			{
-				while((PINB & (1 << button_up)) == 0);
+				while(((PINB & (1 << button_up)) == 0) && (PORTD == (1 << PIND1)));
 				Speed += Temp;
 				if(Speed>=15999) Speed=15999;
 			}
 		}
-		else if((PINB & (1 << button_dowm)) == 0)
+		else if(((PINB & (1 << button_dowm)) == 0) && (PORTD == (1 << PIND1)))
 		{
 			if(Speed >= 1500)
 			{
 				_delay_ms(5);
-				if((PINB & (1 << button_dowm)) == 0)
+				if(((PINB & (1 << button_dowm)) == 0) && (PORTD == (1 << PIND1)))
 				{
-					while((PINB & (1 << button_dowm)) == 0);
+					while(((PINB & (1 << button_dowm)) == 0) && (PORTD == (1 << PIND1)));
 					Speed -= Temp;
 					if(Speed <= 500) Speed = 1500;
 				}
